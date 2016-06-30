@@ -23,7 +23,7 @@ $(function () {
                 '<li><a href="#images" userId="'+ user.id +'" userName="'+ user.name +'" class="item-link item-content">' +
                 '<div class="item-media"><i class="icon icon-f7"></i></div>' +
                 '<div class="item-inner">' +
-                '<div class="item-title">' + user.name + user.count +
+                '<div class="item-title">' + user.name + '&nbsp&nbsp' + user.count +
                 '</div></div></a></li>';
             $('.users-list').append(item);
         }
