@@ -29,12 +29,23 @@ $(function () {
         }
     }
 
-    function renderImages(images) {
+    function getImagesOfUser(userId, images) {
+        var results = [];
+        for (var i = 0, ii = images.length; i < ii; i++) {
+            if (images[i].userId == userId) {
+                results.push(images[i]);
+            }
+        }
+        return results;
+    }
+
+    function renderImages(datas) {
         $('.images-list').empty();
+        var images = getImagesOfUser(localStorage.userId, datas);
         for (var i = 0, ii = images.length; i < ii; i++) {
             var image = images[i];
             var num = i + 1;
-            var url = 'data/' + localStorage.userId + '/' + num + '.png';
+            var url = 'data/' + localStorage.userId + '/' + num + '.JPG';
             if (image.userId == localStorage.userId) {
                 var item =
                     '<div class="card demo-card-header-pic">' +
@@ -53,7 +64,7 @@ $(function () {
                         //'</div>' +
                     '</div>';
                 $('.images-list').append(item);
-                $('.user-name').text(localStorage.userName);
+                $('.user-name').text(localStorage.userName + '精选');
             }
         }
     }
