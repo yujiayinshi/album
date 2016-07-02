@@ -7,7 +7,7 @@ $(function () {
 
     function init() {
         renderRankList(users);
-        renderImages(images)
+        //renderImages(images)
     }
 
     $('.item-link').click(function() {
