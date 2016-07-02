@@ -23,7 +23,7 @@ $(function () {
                 '<li><a href="#images" userId="'+ user.id +'" userName="'+ user.name +'" class="item-link item-content">' +
                 '<div class="item-media"><i class="icon icon-f7"></i></div>' +
                 '<div class="item-inner">' +
-                '<div class="item-title">' + user.name + '&nbsp&nbsp' + user.count +
+                '<div class="item-title">' + user.name + '&nbsp&nbsp' +
                 '</div></div></a></li>';
             $('.users-list').append(item);
         }
@@ -48,15 +48,13 @@ $(function () {
             var url = 'data/' + localStorage.userId + '/' + num + '.JPG';
             if (image.userId == localStorage.userId) {
                 var item =
-                    '<div class="card demo-card-header-pic">' +
-                    '<div valign="bottom" class="card-header color-white no-border no-padding">' +
-                    '<img class="card-cover" src="'+ url +'" alt="">' +
-                    '</div>' +
-                    '<div class="card-content">' +
-                    '<div class="card-content-inner">' +
-                        //'<p class="color-gray">发表于 2015/01/15</p>' +
+                    '<div class="card facebook-card">' +
+                    '<div class="card-header no-border">' +
                     '<p>'+ image.description +'</p>' +
                     '</div>' +
+                    '<div class="card-content">' +
+                    '<img class="card-cover" src="'+ url +'" alt="" width="100%">' +
+                        //'<p class="color-gray">发表于 2015/01/15</p>' +
                     '</div>' +
                         //'<div class="card-footer">' +
                         //'<a href="#" class="link">赞</a>' +
