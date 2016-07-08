@@ -3,68 +3,95 @@
  */
 $(function () {
 
-    init();
+    var userRef = new Wilddog("https://album.wilddogio.com/users");
+    var imageRef = new Wilddog("https://album.wilddogio.com/images");
 
-    function init() {
-        renderRankList(users);
-        //renderImages(images)
-    }
+    $(document).on("pageInit", "#admin", function(e, id, page) {
 
-    $('.item-link').click(function() {
-        localStorage.userId = $(this).attr('userId');
-        localStorage.userName = $(this).attr('userName');
-        renderImages(images);
+        var vm = new Vue({
+            el: '#admin',
+            data: {
+                users: {},
+                images: {},
+                userId: {}
+            },
+            methods: {
+                saveUser: function () {
+                    userRef.push({
+                        nickName: this.nickName
+                    });
+                    $.toast("操作成功");
+                },
+                removeUser: function (key) {
+                    var ref = new Wilddog("https://album.wilddogio.com/users/"+ key);
+                    ref.remove();
+                    $.toast("操作成功");
+                },
+                selectUser: function (key) {
+                    vm.$data.userId = key;
+                    imageRef.orderByChild("userId").equalTo(vm.$data.userId).on("value", function(data) {
+                        vm.$data.images = data.val();
+                    });
+                },
+                saveImage: function () {
+                    imageRef.push({
+                        userId: this.userId,
+                        description: this.description,
+                        url: this.url
+                    });
+                    $.toast("操作成功");
+                },
+                removeImage: function (key) {
+                    var ref = new Wilddog("https://album.wilddogio.com/images/"+ key);
+                    ref.remove();
+                    $.toast("操作成功");
+                }
+            }
+        });
+
+        userRef.on("value", function(data) {
+            vm.$data.users = data.val();
+        });
+
     });
 
-    function renderRankList(users) {
-        for (var i = 0, ii = users.length; i < ii; i++) {
-            var user = users[i];
-            var item =
-                '<li><a href="#images" userId="'+ user.id +'" userName="'+ user.name +'" class="item-link item-content">' +
-                '<div class="item-media"><i class="icon icon-f7"></i></div>' +
-                '<div class="item-inner">' +
-                '<div class="item-title">' + user.name + '&nbsp&nbsp' +
-                '</div></div></a></li>';
-            $('.users-list').append(item);
-        }
-    }
-
-    function getImagesOfUser(userId, images) {
-        var results = [];
-        for (var i = 0, ii = images.length; i < ii; i++) {
-            if (images[i].userId == userId) {
-                results.push(images[i]);
+    $(document).on("pageInit", "#rank", function(e, id, page) {
+        var vm = new Vue({
+            el: '#rank',
+            data: {
+                users: {},
+                userId: {}
+            },
+            methods: {
+                selectUser: function(key, item) {
+                    localStorage.userId = key;
+                    localStorage.userName = item.nickName;
+                    $.router.load('#images', true);
+                    location.reload();
+                }
             }
-        }
-        return results;
-    }
+        });
 
-    function renderImages(datas) {
-        $('.images-list').empty();
-        var images = getImagesOfUser(localStorage.userId, datas);
-        for (var i = 0, ii = images.length; i < ii; i++) {
-            var image = images[i];
-            var num = i + 1;
-            var url = 'data/' + localStorage.userId + '/' + num + '.JPG';
-            if (image.userId == localStorage.userId) {
-                var item =
-                    '<div class="card facebook-card">' +
-                    '<div class="card-header no-border">' +
-                    '<p>'+ image.description +'</p>' +
-                    '</div>' +
-                    '<div class="card-content">' +
-                    '<img class="card-cover" src="'+ url +'" alt="" width="100%">' +
-                        //'<p class="color-gray">发表于 2015/01/15</p>' +
-                    '</div>' +
-                        //'<div class="card-footer">' +
-                        //'<a href="#" class="link">赞</a>' +
-                        //'<a href="#" class="link">更多</a>' +
-                        //'</div>' +
-                    '</div>';
-                $('.images-list').append(item);
-                $('.user-name').text(localStorage.userName + '精选');
+        userRef.on("value", function(data) {
+            vm.$data.users = data.val();
+        });
+    });
+
+    $(document).on("pageInit", "#images", function(e, id, page) {
+
+        var vm = new Vue({
+            el: '#images',
+            data: {
+                images: {},
+                userName: localStorage.userName
             }
-        }
-    }
+        });
+
+        imageRef.orderByChild("userId").equalTo(localStorage.userId).on("value", function(data) {
+            vm.$data.images = data.val();
+        })
+    });
+
+    $.init();
 
 });

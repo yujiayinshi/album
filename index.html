@@ -12,6 +12,13 @@
   <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
   <link rel="stylesheet" href="//g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
 
+  <style>
+    .selected-user {
+      background: lightblue;
+    }
+    [v-cloak] { display: none }
+  </style>
+
 </head>
 <body>
 <div class="page-group">
@@ -19,30 +26,22 @@
     <header class="bar bar-nav">
       <h1 class="title">Hi街晒图大赛</h1>
     </header>
-    <!--<nav class="bar bar-tab">-->
-      <!--<a class="tab-item active" href="#">-->
-        <!--<span class="icon icon-home"></span>-->
-        <!--<span class="tab-label">首页</span>-->
-      <!--</a>-->
-      <!--<a class="tab-item" href="#">-->
-        <!--<span class="icon icon-me"></span>-->
-        <!--<span class="tab-label">我</span>-->
-      <!--</a>-->
-      <!--<a class="tab-item" href="#">-->
-        <!--<span class="icon icon-star"></span>-->
-        <!--<span class="tab-label">收藏</span>-->
-      <!--</a>-->
-      <!--<a class="tab-item" href="#">-->
-        <!--<span class="icon icon-settings"></span>-->
-        <!--<span class="tab-label">设置</span>-->
-      <!--</a>-->
-    <!--</nav>-->
     <div class="content">
-      <div class="content-block-title">晒图排行</div>
+      <div class="content-block-title">晒图精选</div>
       <div class="card">
         <div class="card-content">
           <div class="list-block">
             <ul class="users-list">
+              <li v-for="user in users" v-on:click="selectUser($key, user)" v-clock>
+                <div class="item-content">
+                  <div class="item-media"><i class="icon icon-form-name"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title label">
+                      <a>{{user.nickName}}</a>
+                    </div>
+                  </div>
+                </div>
+              </li>
             </ul>
           </div>
         </div>
@@ -56,9 +55,113 @@
         <span class="icon icon-left"></span>
         返回
       </a>
-      <h1 class='title user-name'></h1>
+      <h1 class='title user-name'>{{userName}}精选</h1>
     </header>
     <div class="content images-list">
+      <div class="card facebook-card" v-for="image in images" v-clock>
+        <div class="card-header no-border">
+          <p>{{image.description}}</p>
+        </div>
+        <div class="card-content">
+          <img v-bind:src="image.url" width="100%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="admin">
+    <header class="bar bar-nav">
+      <a class="button button-link button-nav pull-left back" href="#rank">
+        <span class="icon icon-left"></span>
+        返回
+      </a>
+    </header>
+    <div class="content">
+        <div class="row">
+          <div class="col-20">
+            <div class="list-block">
+              <ul>
+                <!-- Text inputs -->
+                <li>
+                  <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-name"></i></div>
+                    <div class="item-inner">
+                      <div class="item-title label">昵称</div>
+                      <div class="item-input">
+                        <input type="text" v-model="nickName" placeholder="昵称">
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <a class="button button-big button-fill button-success" v-on:click="saveUser">提交</a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="list-block">
+              <ul>
+                <li class="item-content" v-for="item in users" v-bind:class="{'selected-user': $key == userId}">
+                  <div class="item-media"><i class="icon icon-f7"></i></div>
+                  <div class="item-inner">
+                    <div class="item-title" v-on:click="selectUser($key)">{{item.nickName}}</div>
+                    <div class="item-after"><span class="icon icon-remove" v-on:click="removeUser($key)"></span></div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-80">
+            <div class="list-block">
+              <ul>
+
+                <li>
+                  <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-name"></i></div>
+                    <div class="item-inner">
+                      <div class="item-title label">URL</div>
+                      <div class="item-input">
+                        <input type="text" v-model="url" placeholder="url">
+                      </div>
+                    </div>
+                  </div>
+                </li>
+
+                <li>
+                  <div class="item-content">
+                    <div class="item-media"><i class="icon icon-form-name"></i></div>
+                    <div class="item-inner">
+                      <div class="item-title label">描述</div>
+                      <div class="item-input">
+                        <textarea v-model="description" placeholder="描述"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+
+                <li>
+                  <a class="button button-big button-fill button-success" v-on:click="saveImage()">确定</a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="list-block">
+              <ul>
+                <li class="item-content" v-for="item in images">
+                  <div class="item-media">
+                    <img v-bind:src="item.url" style="height: 50px;">
+                  </div>
+                  <div class="item-inner">
+                    <div class="item-title">
+                      {{item.description}}
+                    </div>
+                    <div class="item-after"><span class="icon icon-remove" v-on:click="removeImage($key)"></span></div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -68,7 +171,10 @@
 <script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
 <script type='text/javascript' src='//g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
 
-<script type='text/javascript' src='script/datas.js' charset='utf-8'></script>
+<script src = "https://cdn.wilddog.com/js/client/current/wilddog.js" ></script>
+
+<script src = "http://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
+
 <script type='text/javascript' src='script/index.js' charset='utf-8'></script>
 
 </body>
